@@ -5,9 +5,17 @@
   "description": "",
   "main": "handler.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "sls deploy",
+    "db:fill:products": "aws dynamodb batch-write-item --request-items file://./ddbMocks/productsTable.json",
+    "db:fill:stocks": "aws dynamodb batch-write-item --request-items file://./ddbMocks/stocksTable.json",
+    "db:fill": "npm run db:fill:products && npm run db:fill:stocks"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1473.0",
+    "lodash": "^4.17.21"
+  }
 }
