@@ -1,0 +1,11 @@
+{
+  "name": "import-service",
+  "type": "module",
+  "scripts": {
+    "deploy": "sls deploy"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1478.0",
+    "csv-parser": "^3.0.0"
+  }
+}
