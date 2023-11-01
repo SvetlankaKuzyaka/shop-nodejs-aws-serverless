@@ -35,6 +35,15 @@ provider:
         - "s3:*"
       Resource:
         - "arn:aws:s3:::shop-react-redux-cloudfront-assets/*"
+    - Effect: Allow
+      Action:
+        - sqs:*
+      Resource:
+        - Fn::GetAtt: [SQSQueue, Arn]
+
+  environment:
+    SQS_URL:
+      Ref: SQSQueue
 
 # you can add statements to the Lambda function's IAM Role here
 #  iam:
@@ -123,12 +132,12 @@ functions:
 #      variable2: value2
 
 # you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
+resources:
+  Resources:
+    SQSQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: catalogItemsQueue
 #  Outputs:
 #     NewOutput:
 #       Description: "Description for the output"
