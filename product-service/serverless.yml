@@ -31,9 +31,17 @@ provider:
         - dynamodb:*
       Resource:
         - "arn:aws:dynamodb:${self:provider.region}:*:table/*"
+    - Effect: Allow
+      Action:
+        - sns:*
+      Resource:
+        - Ref: SNSTopic
+
   environment:
     PRODUCT_TABLE_NAME: Products
     STOCKS_TABLE_NAME: Stocks
+    SNS_ARN:
+      Ref: SNSTopic
 
 # you can add statements to the Lambda function's IAM Role here
 #  iam:
@@ -84,6 +92,12 @@ functions:
       - httpApi:
           path: /products
           method: post
+  catalogBatchProcess:
+    handler: handler.catalogBatchProcess
+    events:
+      - sqs:
+          batchSize: 5
+          arn: arn:aws:sqs:eu-west-1:843930971900:catalogItemsQueue
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
@@ -125,12 +139,19 @@ functions:
 #      variable2: value2
 
 # you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
+resources:
+  Resources:
+    SNSTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: createProductTopic
+    SNSSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: svetlankavkuznecov@gmail.com
+        Protocol: email
+        TopicArn:
+          Ref: SNSTopic
 #  Outputs:
 #     NewOutput:
 #       Description: "Description for the output"
