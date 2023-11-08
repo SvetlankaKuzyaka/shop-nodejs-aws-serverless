@@ -11,7 +11,7 @@
 #
 # Happy Coding!
 
-service: import-service
+service: authorization-service
 # app and org for use with dashboard.serverless.com
 #app: your-app-name
 #org: your-org-name
@@ -20,36 +20,14 @@ service: import-service
 # Check out our docs for more details
 frameworkVersion: "3"
 
+plugins:
+  - serverless-dotenv-plugin
+
 provider:
   name: aws
   runtime: nodejs18.x
   stage: dev
   region: eu-west-1
-  httpApi:
-    authorizers:
-      basicAuthorizer:
-        type: request
-        functionArn: arn:aws:lambda:eu-west-1:843930971900:function:authorization-service-dev-basicAuthorizer
-
-  iamRoleStatements:
-    - Effect: Allow
-      Action: "s3:ListBucket"
-      Resource:
-        - "arn:aws:s3:::shop-react-redux-cloudfront-assets"
-    - Effect: "Allow"
-      Action:
-        - "s3:*"
-      Resource:
-        - "arn:aws:s3:::shop-react-redux-cloudfront-assets/*"
-    - Effect: Allow
-      Action:
-        - sqs:*
-      Resource:
-        - Fn::GetAtt: [SQSQueue, Arn]
-
-  environment:
-    SQS_URL:
-      Ref: SQSQueue
 
 # you can add statements to the Lambda function's IAM Role here
 #  iam:
@@ -82,23 +60,8 @@ provider:
 #    - include-me-dir/**
 
 functions:
-  importProductsFile:
-    handler: handler.importProductsFile
-    events:
-      - httpApi:
-          path: /import
-          method: get
-          authorizer:
-            name: basicAuthorizer
-  importFileParser:
-    handler: handler.importFileParser
-    events:
-      - s3:
-          bucket: shop-react-redux-cloudfront-assets
-          event: s3:ObjectCreated:*
-          rules:
-            - prefix: uploaded/
-          existing: true
+  basicAuthorizer:
+    handler: handler.basicAuthorizer
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
@@ -140,12 +103,12 @@ functions:
 #      variable2: value2
 
 # you can add CloudFormation resource templates here
-resources:
-  Resources:
-    SQSQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: catalogItemsQueue
+#resources:
+#  Resources:
+#    NewResource:
+#      Type: AWS::S3::Bucket
+#      Properties:
+#        BucketName: my-new-bucket
 #  Outputs:
 #     NewOutput:
 #       Description: "Description for the output"
