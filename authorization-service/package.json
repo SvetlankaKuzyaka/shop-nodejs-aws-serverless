@@ -1,0 +1,10 @@
+{
+  "name": "authorization-service",
+  "type": "module",
+  "scripts": {
+    "deploy": "sls deploy"
+  },
+  "devDependencies": {
+    "serverless-dotenv-plugin": "^6.0.0"
+  }
+}
